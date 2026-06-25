@@ -22,15 +22,13 @@ uploaded_file = st.file_uploader(
 
 if uploaded_file:
 
-    os.makedirs("../../temp_resumes", exist_ok=True)
+    import tempfile
 
-    temp_path = os.path.join(
-        "../../temp_resumes",
-        uploaded_file.name
-    )
+    suffix = ".pdf" if uploaded_file.name.lower().endswith(".pdf") else ".docx"
 
-    with open(temp_path, "wb") as f:
-        f.write(uploaded_file.getbuffer())
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        tmp.write(uploaded_file.getbuffer())
+        temp_path = tmp.name
 
     st.success("Resume uploaded successfully!")
 

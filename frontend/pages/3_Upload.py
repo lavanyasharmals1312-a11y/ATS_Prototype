@@ -1,18 +1,68 @@
 import streamlit as st
+import os
+import sys
+
+# Allow importing backend modules
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../backend")))
+
+from extractor import extract_pdf, extract_docx
+from gemini_parser import parse_resume
+from database import insert_candidate
+
+st.set_page_config(page_title="Resume Upload", layout="wide")
 
 st.title("Resume Upload")
 
+st.write("Upload a candidate resume to automatically extract and store information.")
+
 uploaded_file = st.file_uploader(
-    "Upload Resume",
+    "Choose Resume",
     type=["pdf", "docx"]
 )
 
 if uploaded_file:
 
-    st.success(
-        f"{uploaded_file.name} uploaded successfully."
+    os.makedirs("../../temp_resumes", exist_ok=True)
+
+    temp_path = os.path.join(
+        "../../temp_resumes",
+        uploaded_file.name
     )
 
-    st.info(
-        "Resume parsing pipeline will be connected here."
+    with open(temp_path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+
+    st.success("Resume uploaded successfully!")
+
+    with st.spinner("Extracting text..."):
+
+        if uploaded_file.name.endswith(".pdf"):
+            text = extract_pdf(temp_path)
+        else:
+            text = extract_docx(temp_path)
+
+    st.success("Text extracted!")
+
+    st.subheader("Extracted Resume Text")
+
+    st.text_area(
+        "",
+        text,
+        height=250
     )
+
+    if st.button("Parse Resume"):
+
+        with st.spinner("Gemini is analysing the resume..."):
+
+            candidate = parse_resume(text)
+
+        st.success("Resume parsed successfully!")
+
+        st.subheader("Candidate Information")
+
+        st.json(candidate)
+
+        insert_candidate(candidate)
+
+        st.success("Candidate stored successfully!")

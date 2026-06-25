@@ -3,3 +3,6 @@ python-docx
 spacy
 pandas
 openpyxl
+streamlit
+python-dotenv
+google-generativeai

@@ -67,9 +67,13 @@ if uploaded_file:
         st.json(candidate)
 
         # Store candidate in Excel
-        append_candidate(candidate)
+        excel_path = append_candidate(candidate)
 
-        st.success("Candidate successfully added to Master_Tracker_Gemini.xlsx")
+        st.success(f"Candidate stored successfully!")
+
+        st.write("Excel saved at:")
+
+        st.code(excel_path)
 
         # Delete temporary file
         if os.path.exists(temp_path):

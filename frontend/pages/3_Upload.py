@@ -1,19 +1,26 @@
 import streamlit as st
 import os
 import sys
+import tempfile
 
 # Allow importing backend modules
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../backend")))
+sys.path.append(
+    os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "../../backend")
+    )
+)
 
 from extractor import extract_pdf, extract_docx
 from gemini_parser import parse_resume
-from database import insert_candidate
+from excel_writer import append_candidate
 
 st.set_page_config(page_title="Resume Upload", layout="wide")
 
 st.title("Resume Upload")
 
-st.write("Upload a candidate resume to automatically extract and store information.")
+st.write(
+    "Upload a candidate resume to automatically extract and store information."
+)
 
 uploaded_file = st.file_uploader(
     "Choose Resume",
@@ -21,8 +28,6 @@ uploaded_file = st.file_uploader(
 )
 
 if uploaded_file:
-
-    import tempfile
 
     suffix = ".pdf" if uploaded_file.name.lower().endswith(".pdf") else ".docx"
 
@@ -34,7 +39,7 @@ if uploaded_file:
 
     with st.spinner("Extracting text..."):
 
-        if uploaded_file.name.endswith(".pdf"):
+        if uploaded_file.name.lower().endswith(".pdf"):
             text = extract_pdf(temp_path)
         else:
             text = extract_docx(temp_path)
@@ -61,6 +66,11 @@ if uploaded_file:
 
         st.json(candidate)
 
-        insert_candidate(candidate)
+        # Store candidate in Excel
+        append_candidate(candidate)
 
-        st.success("Candidate stored successfully!")
+        st.success("Candidate successfully added to Master_Tracker_Gemini.xlsx")
+
+        # Delete temporary file
+        if os.path.exists(temp_path):
+            os.remove(temp_path)

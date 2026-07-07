@@ -78,7 +78,9 @@ def append_candidate(candidate):
         skills,
         ""
     ])
-
+    print(candidate)
+    print(EXCEL_FILE)
     wb.save(EXCEL_FILE)
+    print("Excel saved successfully")
     print(f"Saved Excel at: {os.path.abspath(EXCEL_FILE)}")
     return os.path.abspath(EXCEL_FILE)

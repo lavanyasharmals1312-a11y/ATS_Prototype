@@ -1,7 +1,9 @@
 import os
 from openpyxl import Workbook, load_workbook
 
-EXCEL_FILE = "Master_Tracker_Gemini.xlsx"
+# Save Excel inside the backend folder
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+EXCEL_FILE = os.path.join(BASE_DIR, "Master_Tracker_Gemini.xlsx")
 
 HEADERS = [
     "S.No",
@@ -35,52 +37,56 @@ HEADERS = [
 
 def append_candidate(candidate):
 
+    # Create Excel if it doesn't exist
     if os.path.exists(EXCEL_FILE):
         wb = load_workbook(EXCEL_FILE)
         ws = wb.active
     else:
         wb = Workbook()
         ws = wb.active
+        ws.title = "Candidates"
         ws.append(HEADERS)
 
+    # Serial Number
     sno = ws.max_row
 
-    skills = candidate.get("skills", "")
+    # Convert skills list to comma-separated string
+    skills = candidate.get("skills", [])
 
     if isinstance(skills, list):
         skills = ", ".join(skills)
 
     ws.append([
-        sno,
-        "",
-        "",
-        "",
-        candidate.get("name", ""),
-        candidate.get("phone", ""),
-        candidate.get("email", ""),
-        candidate.get("level", ""),
-        candidate.get("current_organization", ""),
-        candidate.get("experience", ""),
-        candidate.get("current_ctc", ""),
-        candidate.get("expected_ctc", ""),
-        candidate.get("notice_period", ""),
-        candidate.get("current_location", ""),
-        candidate.get("preferred_location", ""),
-        candidate.get("offer_in_hand", ""),
-        candidate.get("reason_for_job_change", ""),
-        candidate.get("highest_qualification", ""),
-        candidate.get("university", ""),
-        "",
-        "",
-        "",
-        "",
-        candidate.get("role", ""),
-        skills,
-        ""
+        sno,                                       # S.No
+        "",                                        # Record ID
+        "",                                        # Duplicate Status
+        "",                                        # Alt ID
+        candidate.get("candidate_name", ""),       # Name
+        candidate.get("candidate_phone", ""),      # Contact No
+        candidate.get("candidate_email", ""),      # Email
+        "",                                        # Level
+        candidate.get("current_company", ""),      # Current Organization
+        candidate.get("experience_years", ""),     # Total Experience
+        candidate.get("current_ctc", ""),          # Current CTC
+        candidate.get("expected_ctc", ""),         # Expected CTC
+        candidate.get("notice_period", ""),        # Notice Period
+        candidate.get("current_location", ""),     # Current Location
+        candidate.get("preferred_location", ""),   # Preferred Location
+        "",                                        # Offer in Hand
+        "",                                        # Reason for Job Change
+        candidate.get("highest_qualification", ""),# Highest Qualification
+        candidate.get("university", ""),           # University
+        "",                                        # Communication Rating
+        "",                                        # Comments
+        "",                                        # Shared On
+        "",                                        # Source Name
+        candidate.get("current_designation", ""),  # Role
+        skills,                                    # Skills
+        ""                                         # HR Name
     ])
-    print(candidate)
-    print(EXCEL_FILE)
+
     wb.save(EXCEL_FILE)
-    print("Excel saved successfully")
-    print(f"Saved Excel at: {os.path.abspath(EXCEL_FILE)}")
-    return os.path.abspath(EXCEL_FILE)
+
+    print(f"Excel saved at: {EXCEL_FILE}")
+
+    return EXCEL_FILE

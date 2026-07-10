@@ -28,10 +28,63 @@ def parse_resume(text):
     - Skills must ALWAYS be returned as a JSON array.
     - Experience should be returned as the total years of experience (numeric only, e.g. 1.6, 5, 10.5).
     - Current Company should be the candidate's latest employer.
-    - Current Designation should be the latest job title.
-    - Current Location should be the candidate's present city/state where they currently live or work. Do NOT use preferred location or university location.
-    - Highest Qualification should only contain the degree (e.g. B.Tech, M.Tech, MBA).
-    - University should contain the university/college name only.
+    -Current Designation:
+        Extract the candidate's MOST RECENT job title.
+
+        This is usually the designation associated with the latest work experience.
+
+        Examples:
+        - Software Engineer
+        - Senior Software Engineer
+        - Associate Consultant
+        - Data Scientist
+        - AI Engineer
+        - Backend Developer
+        - Technical Architect
+        - Team Lead
+        - Manager
+
+        Do NOT return department names.
+        Do NOT return company names.
+        Return ONLY the designation.
+        - Current Location:
+        Extract the candidate's CURRENT location.
+
+        Search the resume in this order:
+
+        1. "Current Location"
+        2. "Location"
+        3. "Present Location"
+        4. "Address"
+        5. Header beside phone/email
+        6. Location beside the latest company
+
+        Ignore:
+        - Preferred Location
+        - Previous work locations
+        - University location
+
+        Examples:
+        Bengaluru
+        Noida
+        Hyderabad
+        Pune, Maharashtra
+
+        Return only the current city (or city, state).
+        -Highest Qualification:
+        Return ONLY the highest degree.
+
+        Examples:
+
+        Bachelor of Technology -> B.Tech
+        Bachelor of Engineering -> B.E.
+        Master of Technology -> M.Tech
+        Master of Science -> M.Sc.
+        Master of Business Administration -> MBA
+
+        Do not include branch.
+        Do not include university.
+        - University should contain the university/college name only.
 
     Return EXACTLY this JSON:
 

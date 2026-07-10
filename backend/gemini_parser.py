@@ -16,50 +16,46 @@ model = genai.GenerativeModel("gemini-2.5-flash")
 def parse_resume(text):
 
     prompt = f"""
-You are an expert ATS Resume Parser.
+    You are an expert ATS Resume Parser.
 
-Extract every field below from the resume.
+    Extract information from the resume and return ONLY valid JSON.
 
-IMPORTANT RULES:
-- Return ONLY valid JSON.
-- Do not include markdown.
-- Do not explain anything.
-- If a field is missing, return an empty string "".
-- Never hallucinate.
-- Skills should ALWAYS be a JSON array.
-- Experience should be only the numeric years (e.g. 3.5, 8, 12).
-- Current designation means the candidate's latest job title.
-- Current company means the employer corresponding to the latest designation.
-- Highest qualification should contain only the degree.
-- University should contain only the university/college.
-- Level should be inferred from the designation if possible (Intern, Associate, Software Engineer, Senior Engineer, Lead, Manager, Architect, Principal, Director, etc.)
+    IMPORTANT RULES:
+    - Return ONLY JSON.
+    - Do NOT include markdown or explanations.
+    - If a field is not mentioned, return an empty string "".
+    - Do NOT hallucinate information.
+    - Skills must ALWAYS be returned as a JSON array.
+    - Experience should be returned as the total years of experience (numeric only, e.g. 1.6, 5, 10.5).
+    - Current Company should be the candidate's latest employer.
+    - Current Designation should be the latest job title.
+    - Current Location should be the candidate's present city/state where they currently live or work. Do NOT use preferred location or university location.
+    - Highest Qualification should only contain the degree (e.g. B.Tech, M.Tech, MBA).
+    - University should contain the university/college name only.
 
-Return EXACTLY this JSON format:
+    Return EXACTLY this JSON:
 
-{{
-"candidate_name":"",
-"candidate_email":"",
-"candidate_phone":"",
-"current_designation":"",
-"level":"",
-"current_company":"",
-"experience_years":"",
-"current_location":"",
-"preferred_location":"",
-"notice_period":"",
-"current_ctc":"",
-"expected_ctc":"",
-"offer_in_hand":"",
-"reason_for_job_change":"",
-"highest_qualification":"",
-"university":"",
-"skills":[]
-}}
+    {{
+        "candidate_name": "",
+        "candidate_email": "",
+        "candidate_phone": "",
+        "current_designation": "",
+        "current_company": "",
+        "experience_years": "",
+        "current_location": "",
+        "preferred_location": "",
+        "notice_period": "",
+        "current_ctc": "",
+        "expected_ctc": "",
+        "highest_qualification": "",
+        "university": "",
+        "skills": []
+    }}
 
-Resume:
+    Resume:
 
-{text}
-"""
+    {text}
+    """
 
     response = model.generate_content(prompt)
 

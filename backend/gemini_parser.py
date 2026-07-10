@@ -65,7 +65,11 @@ def parse_resume(text):
         cleaned = cleaned.replace("```json", "")
         cleaned = cleaned.replace("```", "")
         cleaned = cleaned.strip()
-
-    return json.loads(cleaned)
+    try:
+        return json.loads(cleaned)
+    except Exception as e:
+        print(cleaned)
+        raise e
+        return json.loads(cleaned)
 
 

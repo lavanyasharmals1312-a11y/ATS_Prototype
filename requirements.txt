@@ -1,8 +1,9 @@
-pdfplumber
-python-docx
-spacy
+streamlit
 pandas
 openpyxl
-streamlit
+pdfplumber
+python-docx
 python-dotenv
 google-generativeai
+spacy
+requests

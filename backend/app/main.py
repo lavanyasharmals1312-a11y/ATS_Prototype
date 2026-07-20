@@ -5,12 +5,13 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from loguru import logger
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
+from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 from app.config import settings
+from app.rate_limit import limiter
 from app.routes.health import router as health_router
+from app.routes.auth import router as auth_router
 
 
 # ── Logging setup ──────────────────────────────────────────
@@ -42,8 +43,7 @@ async def lifespan(app: FastAPI):
 
 
 # ── Rate Limiter ───────────────────────────────────────────
-
-limiter = Limiter(key_func=get_remote_address)
+# limiter instance defined in app/rate_limit.py
 
 
 # ── FastAPI Application ────────────────────────────────────
@@ -84,6 +84,7 @@ app.add_middleware(
 # ── Routes ─────────────────────────────────────────────────
 
 app.include_router(health_router)
+app.include_router(auth_router)
 
 
 # ── Global Exception Handler ───────────────────────────────

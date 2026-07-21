@@ -60,3 +60,14 @@ def get_duplicate_service(
 ) -> DuplicateService:
     repo = DuplicateFlagRepository(db)
     return DuplicateService(repo)
+
+
+from app.repositories.import_repository import ImportBatchRepository
+from app.services.import_service import ImportService
+
+
+def get_import_service(
+    db: AsyncSession = Depends(get_db),
+) -> ImportService:
+    repo = ImportBatchRepository(db)
+    return ImportService(repo)

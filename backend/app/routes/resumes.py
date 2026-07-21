@@ -93,6 +93,12 @@ async def _process_resume(parse_job_id: str) -> None:
             db.add(candidate)
             await db.flush()
 
+            from app.services.duplicate_detector import build_detector
+            detector = build_detector()
+            dup_flags = await detector.check(candidate, db)
+            if dup_flags:
+                logger.info(f"Duplicate detection: {len(dup_flags)} flag(s) for candidate {candidate.id}")
+
             resume.candidate_id = candidate.id
             parse_job.status = "completed"
             parse_job.parser_used = "rule_based"

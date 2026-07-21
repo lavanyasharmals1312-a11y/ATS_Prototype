@@ -11,6 +11,7 @@ from sqlalchemy import (
     func,
 )
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
 from app.database import Base
 
@@ -39,6 +40,22 @@ class DuplicateFlag(Base):
     reviewed_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    candidate_a_rel = relationship(
+        "Candidate",
+        foreign_keys="DuplicateFlag.candidate_id_a",
+        lazy="noload",
+    )
+    candidate_b_rel = relationship(
+        "Candidate",
+        foreign_keys="DuplicateFlag.candidate_id_b",
+        lazy="noload",
+    )
+    reviewer_rel = relationship(
+        "User",
+        foreign_keys="DuplicateFlag.reviewed_by",
+        lazy="noload",
     )
 
     def __repr__(self) -> str:

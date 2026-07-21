@@ -44,6 +44,8 @@ async def get_current_user(
 
 from app.repositories.candidate_repository import CandidateRepository
 from app.services.candidate_service import CandidateService
+from app.repositories.duplicate_repository import DuplicateFlagRepository
+from app.services.duplicate_service import DuplicateService
 
 
 def get_candidate_service(
@@ -51,3 +53,10 @@ def get_candidate_service(
 ) -> CandidateService:
     repo = CandidateRepository(db)
     return CandidateService(repo)
+
+
+def get_duplicate_service(
+    db: AsyncSession = Depends(get_db),
+) -> DuplicateService:
+    repo = DuplicateFlagRepository(db)
+    return DuplicateService(repo)

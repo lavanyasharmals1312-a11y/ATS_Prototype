@@ -22,7 +22,7 @@ class Candidate(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     candidate_name = Column(Text, nullable=True)
-    candidate_email = Column(Text, unique=True, nullable=True, index=True)
+    candidate_email = Column(Text, nullable=True, index=True)
     candidate_phone = Column(Text, nullable=True, index=True)
     current_designation = Column(Text, nullable=True)
     current_company = Column(Text, nullable=True)

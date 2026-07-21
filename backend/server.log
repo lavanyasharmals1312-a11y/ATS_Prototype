@@ -5,3 +5,189 @@ INFO:     Started server process [43546]
 INFO:     Waiting for application startup.
 2026-07-21 01:56:00 | INFO     | app.main:lifespan:36 - Starting ProEx Labs ATS v1.0.0 (development)
 INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/rule_parser.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-07-21 11:46:44 | INFO     | app.main:lifespan:43 - Shutting down ProEx Labs ATS
+INFO:     Application shutdown complete.
+INFO:     Finished server process [43546]
+INFO:     Started server process [47101]
+INFO:     Waiting for application startup.
+2026-07-21 11:46:45 | INFO     | app.main:lifespan:36 - Starting ProEx Labs ATS v1.0.0 (development)
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/rule_parser.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-07-21 11:50:32 | INFO     | app.main:lifespan:43 - Shutting down ProEx Labs ATS
+INFO:     Application shutdown complete.
+INFO:     Finished server process [47101]
+INFO:     Started server process [47318]
+INFO:     Waiting for application startup.
+2026-07-21 11:50:32 | INFO     | app.main:lifespan:36 - Starting ProEx Labs ATS v1.0.0 (development)
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/routes/resumes.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-07-21 12:15:47 | INFO     | app.main:lifespan:43 - Shutting down ProEx Labs ATS
+INFO:     Application shutdown complete.
+INFO:     Finished server process [47318]
+INFO:     Started server process [48047]
+INFO:     Waiting for application startup.
+2026-07-21 12:15:48 | INFO     | app.main:lifespan:36 - Starting ProEx Labs ATS v1.0.0 (development)
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/routes/resumes.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-07-21 12:15:50 | INFO     | app.main:lifespan:43 - Shutting down ProEx Labs ATS
+INFO:     Application shutdown complete.
+INFO:     Finished server process [48047]
+INFO:     Started server process [48073]
+INFO:     Waiting for application startup.
+2026-07-21 12:15:51 | INFO     | app.main:lifespan:36 - Starting ProEx Labs ATS v1.0.0 (development)
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/routes/resumes.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-07-21 12:15:59 | INFO     | app.main:lifespan:43 - Shutting down ProEx Labs ATS
+INFO:     Application shutdown complete.
+INFO:     Finished server process [48073]
+INFO:     Started server process [48116]
+INFO:     Waiting for application startup.
+2026-07-21 12:16:00 | INFO     | app.main:lifespan:36 - Starting ProEx Labs ATS v1.0.0 (development)
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/repositories/__init__.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-07-21 12:44:24 | INFO     | app.main:lifespan:43 - Shutting down ProEx Labs ATS
+INFO:     Application shutdown complete.
+INFO:     Finished server process [48116]
+INFO:     Started server process [48538]
+INFO:     Waiting for application startup.
+2026-07-21 12:44:25 | INFO     | app.main:lifespan:36 - Starting ProEx Labs ATS v1.0.0 (development)
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/schemas/candidate.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-07-21 12:52:31 | INFO     | app.main:lifespan:43 - Shutting down ProEx Labs ATS
+INFO:     Application shutdown complete.
+INFO:     Finished server process [48538]
+INFO:     Started server process [48634]
+INFO:     Waiting for application startup.
+2026-07-21 12:52:32 | INFO     | app.main:lifespan:36 - Starting ProEx Labs ATS v1.0.0 (development)
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/schemas/stats.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-07-21 12:54:00 | INFO     | app.main:lifespan:43 - Shutting down ProEx Labs ATS
+INFO:     Application shutdown complete.
+INFO:     Finished server process [48634]
+INFO:     Started server process [48664]
+INFO:     Waiting for application startup.
+2026-07-21 12:54:01 | INFO     | app.main:lifespan:36 - Starting ProEx Labs ATS v1.0.0 (development)
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/models/candidate.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-07-21 12:55:25 | INFO     | app.main:lifespan:43 - Shutting down ProEx Labs ATS
+INFO:     Application shutdown complete.
+INFO:     Finished server process [48664]
+INFO:     Started server process [48695]
+INFO:     Waiting for application startup.
+2026-07-21 12:55:26 | INFO     | app.main:lifespan:36 - Starting ProEx Labs ATS v1.0.0 (development)
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/models/resume.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-07-21 12:57:45 | INFO     | app.main:lifespan:43 - Shutting down ProEx Labs ATS
+INFO:     Application shutdown complete.
+INFO:     Finished server process [48695]
+INFO:     Started server process [48740]
+INFO:     Waiting for application startup.
+2026-07-21 12:57:46 | INFO     | app.main:lifespan:36 - Starting ProEx Labs ATS v1.0.0 (development)
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/repositories/candidate_repository.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-07-21 13:00:37 | INFO     | app.main:lifespan:43 - Shutting down ProEx Labs ATS
+INFO:     Application shutdown complete.
+INFO:     Finished server process [48740]
+INFO:     Started server process [48780]
+INFO:     Waiting for application startup.
+2026-07-21 13:00:38 | INFO     | app.main:lifespan:36 - Starting ProEx Labs ATS v1.0.0 (development)
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/repositories/candidate_repository.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-07-21 13:03:36 | INFO     | app.main:lifespan:43 - Shutting down ProEx Labs ATS
+INFO:     Application shutdown complete.
+INFO:     Finished server process [48780]
+INFO:     Started server process [48832]
+INFO:     Waiting for application startup.
+2026-07-21 13:03:37 | INFO     | app.main:lifespan:36 - Starting ProEx Labs ATS v1.0.0 (development)
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/candidate_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-07-21 13:46:19 | INFO     | app.main:lifespan:43 - Shutting down ProEx Labs ATS
+INFO:     Application shutdown complete.
+INFO:     Finished server process [48832]
+INFO:     Started server process [49185]
+INFO:     Waiting for application startup.
+2026-07-21 13:46:20 | INFO     | app.main:lifespan:36 - Starting ProEx Labs ATS v1.0.0 (development)
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/dependencies.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-07-21 13:48:36 | INFO     | app.main:lifespan:43 - Shutting down ProEx Labs ATS
+INFO:     Application shutdown complete.
+INFO:     Finished server process [49185]
+INFO:     Started server process [49216]
+INFO:     Waiting for application startup.
+2026-07-21 13:48:36 | INFO     | app.main:lifespan:36 - Starting ProEx Labs ATS v1.0.0 (development)
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/routes/candidates.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-07-21 13:52:16 | INFO     | app.main:lifespan:43 - Shutting down ProEx Labs ATS
+INFO:     Application shutdown complete.
+INFO:     Finished server process [49216]
+INFO:     Started server process [49264]
+INFO:     Waiting for application startup.
+2026-07-21 13:52:16 | INFO     | app.main:lifespan:36 - Starting ProEx Labs ATS v1.0.0 (development)
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/routes/stats.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-07-21 13:54:53 | INFO     | app.main:lifespan:43 - Shutting down ProEx Labs ATS
+INFO:     Application shutdown complete.
+INFO:     Finished server process [49264]
+INFO:     Started server process [49295]
+INFO:     Waiting for application startup.
+2026-07-21 13:54:54 | INFO     | app.main:lifespan:36 - Starting ProEx Labs ATS v1.0.0 (development)
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/main.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-07-21 13:59:00 | INFO     | app.main:lifespan:43 - Shutting down ProEx Labs ATS
+INFO:     Application shutdown complete.
+INFO:     Finished server process [49295]
+INFO:     Started server process [49330]
+INFO:     Waiting for application startup.
+2026-07-21 13:59:00 | INFO     | app.main:lifespan:38 - Starting ProEx Labs ATS v1.0.0 (development)
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/main.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-07-21 16:33:09 | INFO     | app.main:lifespan:45 - Shutting down ProEx Labs ATS
+INFO:     Application shutdown complete.
+INFO:     Finished server process [49330]
+INFO:     Started server process [49898]
+INFO:     Waiting for application startup.
+2026-07-21 16:33:09 | INFO     | app.main:lifespan:38 - Starting ProEx Labs ATS v1.0.0 (development)
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-07-21 16:35:14 | INFO     | app.main:lifespan:45 - Shutting down ProEx Labs ATS
+INFO:     Application shutdown complete.
+INFO:     Finished server process [49898]
+INFO:     Stopping reloader process [43526]

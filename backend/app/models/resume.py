@@ -2,6 +2,7 @@ from uuid import uuid4
 
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, Text, func
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
 from app.database import Base
 
@@ -26,6 +27,12 @@ class Resume(Base):
     )
     uploaded_by = Column(
         UUID(as_uuid=True), ForeignKey("users.id"), nullable=True
+    )
+
+    candidate = relationship(
+        "Candidate",
+        back_populates="resumes",
+        foreign_keys="Resume.candidate_id",
     )
 
     def __repr__(self) -> str:

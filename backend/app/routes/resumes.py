@@ -1,5 +1,8 @@
+from pathlib import Path
+import pdfplumber
+
 from fastapi import APIRouter, Depends, File, UploadFile, BackgroundTasks, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 import logging
@@ -9,18 +12,103 @@ from app.models import User, Candidate, Resume, ParseJob
 from app.dependencies import get_db
 from app.schemas.resume import ResumeUploadResponse, ParseJobResponse
 from app.services.file_service import validate_file, store_file, build_file_response
+from app.services.rule_parser import RuleBasedParser
 from app.routes.auth import get_current_user
+from app.database import AsyncSessionLocal
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/v1", tags=["resumes"])
 
-async def _process_resume_stub(parse_job_id: str) -> None:
-    """
-    Placeholder for Phase 5 parse pipeline.
-    In Phase 5 this will be replaced by parse_pipeline.process()
-    """
-    logger.info(f"[STUB] Parse job {parse_job_id} queued — pipeline not yet wired")
+
+def _extract_text_from_pdf(file_path: str) -> str:
+    full_path = Path(settings.upload_dir) / file_path
+    text_parts = []
+    with pdfplumber.open(str(full_path)) as pdf:
+        for page in pdf.pages:
+            text = page.extract_text()
+            if text:
+                text_parts.append(text)
+    return "\n".join(text_parts)
+
+
+def _extract_text_from_docx(file_path: str) -> str:
+    from docx import Document
+    full_path = Path(settings.upload_dir) / file_path
+    doc = Document(str(full_path))
+    return "\n".join(p.text for p in doc.paragraphs)
+
+
+async def _process_resume(parse_job_id: str) -> None:
+    async with AsyncSessionLocal() as db:
+        result = await db.execute(
+            select(ParseJob).where(ParseJob.id == parse_job_id)
+        )
+        parse_job = result.scalar_one_or_none()
+        if parse_job is None:
+            return
+
+        result = await db.execute(
+            select(Resume).where(Resume.id == parse_job.resume_id)
+        )
+        resume = result.scalar_one_or_none()
+        if resume is None:
+            parse_job.status = "failed"
+            parse_job.error_message = "Resume record not found"
+            await db.commit()
+            return
+
+        parse_job.started_at = func.now()
+        parse_job.status = "processing"
+        await db.commit()
+
+        try:
+            if resume.mime_type == "application/pdf":
+                raw_text = _extract_text_from_pdf(resume.file_path)
+            elif resume.mime_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                raw_text = _extract_text_from_docx(resume.file_path)
+            else:
+                raise ValueError(f"Unsupported mime type: {resume.mime_type}")
+
+            parser = RuleBasedParser()
+            parsed = await parser.parse(raw_text)
+
+            candidate = Candidate(
+                candidate_name=parsed.get("candidate_name") or None,
+                candidate_email=parsed.get("candidate_email") or None,
+                candidate_phone=parsed.get("candidate_phone") or None,
+                current_designation=parsed.get("current_designation") or None,
+                current_company=parsed.get("current_company") or None,
+                experience_years=parsed.get("experience_years"),
+                current_location=parsed.get("current_location") or None,
+                preferred_location=parsed.get("preferred_location") or None,
+                notice_period=parsed.get("notice_period") or None,
+                current_ctc=parsed.get("current_ctc") or None,
+                expected_ctc=parsed.get("expected_ctc") or None,
+                highest_qualification=parsed.get("highest_qualification") or None,
+                university=parsed.get("university") or None,
+                skills=parsed.get("skills") or None,
+                source="upload",
+            )
+            db.add(candidate)
+            await db.flush()
+
+            resume.candidate_id = candidate.id
+            parse_job.status = "completed"
+            parse_job.parser_used = "rule_based"
+            parse_job.raw_text = raw_text[:50000]
+            parse_job.parsed_data = parsed
+            parse_job.completed_at = func.now()
+            await db.commit()
+
+            logger.info(f"Parse completed: job={parse_job_id} candidate={candidate.id}")
+
+        except Exception as e:
+            logger.exception(f"Parse failed for job {parse_job_id}")
+            parse_job.status = "failed"
+            parse_job.error_message = str(e)[:500]
+            parse_job.completed_at = func.now()
+            await db.commit()
 
 @router.post("/resumes/upload", status_code=status.HTTP_202_ACCEPTED)
 async def upload_resume(
@@ -62,8 +150,8 @@ async def upload_resume(
     await db.commit()
     await db.refresh(parse_job)
 
-    # 6. Add background task (stub)
-    background_tasks.add_task(_process_resume_stub, str(parse_job.id))
+    # 6. Add background task
+    background_tasks.add_task(_process_resume, str(parse_job.id))
 
     # 7. Log
     logger.info(f"Resume upload queued: parse_job={parse_job.id}")

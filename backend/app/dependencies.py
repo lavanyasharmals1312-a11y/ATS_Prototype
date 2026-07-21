@@ -40,3 +40,14 @@ async def get_current_user(
             status_code=401, detail="User not found or inactive"
         )
     return user
+
+
+from app.repositories.candidate_repository import CandidateRepository
+from app.services.candidate_service import CandidateService
+
+
+def get_candidate_service(
+    db: AsyncSession = Depends(get_db),
+) -> CandidateService:
+    repo = CandidateRepository(db)
+    return CandidateService(repo)

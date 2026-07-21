@@ -12,6 +12,7 @@ from sqlalchemy import (
     func,
 )
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
 from app.database import Base
 
@@ -53,6 +54,13 @@ class Candidate(Base):
     )
     created_by = Column(
         UUID(as_uuid=True), ForeignKey("users.id"), nullable=True
+    )
+
+    resumes = relationship(
+        "Resume",
+        back_populates="candidate",
+        primaryjoin="Candidate.id == Resume.candidate_id",
+        lazy="noload",
     )
 
     def __repr__(self) -> str:

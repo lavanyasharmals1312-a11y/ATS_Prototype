@@ -13,6 +13,8 @@ from app.rate_limit import limiter
 from app.routes.health import router as health_router
 from app.routes.auth import router as auth_router
 from app.routes.resumes import router as resumes_router
+from app.routes.candidates import router as candidates_router
+from app.routes.stats import router as stats_router
 
 
 # ── Logging setup ──────────────────────────────────────────
@@ -87,6 +89,8 @@ app.add_middleware(
 app.include_router(health_router)
 app.include_router(auth_router)
 app.include_router(resumes_router)
+app.include_router(candidates_router)
+app.include_router(stats_router)
 
 
 # ── Global Exception Handler ───────────────────────────────

@@ -12,6 +12,7 @@ from app.config import settings
 from app.rate_limit import limiter
 from app.routes.health import router as health_router
 from app.routes.auth import router as auth_router
+from app.routes.resumes import router as resumes_router
 
 
 # ── Logging setup ──────────────────────────────────────────
@@ -85,6 +86,7 @@ app.add_middleware(
 
 app.include_router(health_router)
 app.include_router(auth_router)
+app.include_router(resumes_router)
 
 
 # ── Global Exception Handler ───────────────────────────────

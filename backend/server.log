@@ -1,0 +1,7 @@
+INFO:     Will watch for changes in these directories: ['/Users/yazh_7z7/Desktop/ProEx_Labs/ATS_Prototype_1/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [43526] using WatchFiles
+INFO:     Started server process [43546]
+INFO:     Waiting for application startup.
+2026-07-21 01:56:00 | INFO     | app.main:lifespan:36 - Starting ProEx Labs ATS v1.0.0 (development)
+INFO:     Application startup complete.

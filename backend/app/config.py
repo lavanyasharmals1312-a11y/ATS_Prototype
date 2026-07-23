@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     database_url: str
     secret_key: str
     enable_ai_parsing: bool = False
+    gemini_api_key: str = ""
     upload_dir: str = "./uploads"
     max_file_size_mb: int = 10
     cors_origins: str = "http://localhost:5173"

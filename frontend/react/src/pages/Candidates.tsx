@@ -1,17 +1,19 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useSearchParams } from 'react-router-dom'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, FileDown, Loader2 } from 'lucide-react'
 import { PageHeader } from '@/components/common/PageHeader'
 import { FilterPanel } from '@/components/candidates/FilterPanel'
 import { CandidateTable } from '@/components/candidates/CandidateTable'
 import { Button } from '@/components/ui/button'
 import { useCandidates } from '@/hooks/useCandidates'
+import { candidateService } from '@/services/candidateService'
 import type { CandidateFilters } from '@/types'
 
 export default function Candidates() {
   const shouldReduceMotion = useReducedMotion()
   const [searchParams, setSearchParams] = useSearchParams()
+  const [isExporting, setIsExporting] = useState(false)
 
   const filters: CandidateFilters = {
     search: searchParams.get('search') || undefined,
@@ -43,6 +45,21 @@ export default function Candidates() {
     [handleApplyFilters, filters.search, filters.skills, filters.location],
   )
 
+  const handleExport = useCallback(async () => {
+    setIsExporting(true)
+    try {
+      await candidateService.exportExcel({
+        search: filters.search,
+        skills: filters.skills,
+        location: filters.location,
+      })
+    } catch (err) {
+      console.error('Excel export failed:', err)
+    } finally {
+      setIsExporting(false)
+    }
+  }, [filters.search, filters.skills, filters.location])
+
   const totalPages = data?.pages ?? 1
   const currentPage = data?.page ?? 1
   const pageSize = data?.page_size ?? 20
@@ -55,10 +72,37 @@ export default function Candidates() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
     >
-      <PageHeader
-        title="Candidates"
-        description="Search and manage your talent pipeline"
-      />
+      <div className="flex items-start justify-between gap-4">
+        <PageHeader
+          title="Candidates"
+          description="Search and manage your talent pipeline"
+        />
+
+        {/* Export Excel button */}
+        <div className="mt-1 shrink-0">
+          <Button
+            id="export-excel-btn"
+            variant="secondary"
+            size="sm"
+            onClick={handleExport}
+            disabled={isExporting || isLoading || total === 0}
+            className="gap-2 border-border bg-surface text-text-2 hover:bg-surface-2 hover:text-text disabled:opacity-50"
+            aria-label="Download candidates as Excel spreadsheet"
+          >
+            {isExporting ? (
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            ) : (
+              <FileDown className="h-4 w-4" aria-hidden="true" />
+            )}
+            {isExporting ? 'Exporting…' : 'Export Excel'}
+            {!isExporting && total > 0 && (
+              <span className="ml-0.5 rounded bg-surface-2 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-text-3">
+                {total.toLocaleString()}
+              </span>
+            )}
+          </Button>
+        </div>
+      </div>
 
       <FilterPanel
         filters={filters}

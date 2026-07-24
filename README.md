@@ -4,7 +4,7 @@
 
 A modern, high-performance Applicant Tracking System built for ProEx Labs. Designed to streamline the recruitment process through advanced resume parsing, intelligent duplicate detection, and a seamless recruiter experience.
 
-## 🌟 Key Features
+## Key Features
 
 * **Advanced Candidate Management:** Centralized hub for recruiters to view, filter, edit, and manage candidate profiles.
 * **Intelligent Resume Parsing:** Upload candidate resumes (PDF, DOCX) and automatically extract key information such as skills, experience, and contact details (supports both rule-based and AI-assisted extraction via Gemini).
@@ -15,7 +15,7 @@ A modern, high-performance Applicant Tracking System built for ProEx Labs. Desig
 * **Team Management:** Dedicated admin dashboard to provision accounts and deactivate former employees.
 * **Password Recovery:** Secure, token-based "Forgot Password" workflow.
 
-## 🏗️ Architecture & Tech Stack
+## Architecture & Tech Stack
 
 The system is built on a modern, decoupled client-server architecture to ensure scalability, type safety, and a premium user experience.
 
@@ -36,7 +36,7 @@ The system is built on a modern, decoupled client-server architecture to ensure 
 * **Animations:** Framer Motion for premium micro-interactions.
 * **Routing:** React Router v6.
 
-## 🚀 Getting Started
+## Getting Started
 
 The project relies on Docker for the database and requires Python and Node.js for the backend and frontend, respectively. 
 
@@ -47,7 +47,7 @@ For a complete, step-by-step walkthrough on how to configure environment variabl
 2. Start the backend: `cd backend && source venv/bin/activate && uvicorn app.main:app --reload`
 3. Start the frontend: `cd frontend/react && npm run dev`
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 ATS_Prototype_1/
@@ -73,12 +73,12 @@ ATS_Prototype_1/
         └── package.json
 ```
 
-## 🔐 Security & Access
+## Security & Access
 
 - **Internal Tool Architecture:** As an internal corporate tool, there is no public sign-up page. All recruiter accounts must be provisioned by an Administrator via the **Team Management** dashboard.
 - **Data Protection:** Passwords are never stored in plaintext. Session management is strictly handled via expiring HTTP Bearer tokens.
 
-## 🤝 Contributing
+## Contributing
 
 When contributing to this project:
 1. Ensure all new backend routes are protected by the `get_current_user` or `require_admin` dependency where applicable.
@@ -86,4 +86,4 @@ When contributing to this project:
 3. Use the existing `shadcn/ui` components for consistency in design.
 
 ---
-*Built with ❤️ for ProEx Labs.*
+*Built for ProEx Labs.*

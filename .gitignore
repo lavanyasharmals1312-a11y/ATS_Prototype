@@ -17,3 +17,16 @@ desktop.ini
 resume_test.py
 test_gemini.py
 temp_resumes/
+
+# ProEx ATS production
+backend/.env
+backend/uploads/
+backend/venv/
+backend/**/__pycache__/
+frontend/node_modules/
+frontend/dist/
+.DS_Store
+~$*.xlsx*.log
+~$*.xlsx
+Master_Tracker_Gemini.xlsx
+~$Master_Tracker_Gemini.xlsx

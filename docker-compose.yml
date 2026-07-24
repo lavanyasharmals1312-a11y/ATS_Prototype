@@ -1,16 +1,34 @@
 services:
-  ats:
-    build: .
-
-    container_name: ats_parser
-
-    ports:
-      - "8501:8501"
-
-    env_file:
-      - backend/.env
-
+  db:
+    image: postgres:16-alpine
+    container_name: proex_ats_db
+    environment:
+      POSTGRES_USER: ats_user
+      POSTGRES_PASSWORD: ats_password
+      POSTGRES_DB: proex_ats
     volumes:
-      - .:/app
-
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ats_user -d proex_ats"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: proex_ats_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@proexlabs.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

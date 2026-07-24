@@ -1,0 +1,63 @@
+Python
+Java
+JavaScript
+TypeScript
+React
+Angular
+Vue.js
+Node.js
+Express.js
+Django
+Flask
+FastAPI
+Spring Boot
+PostgreSQL
+MySQL
+MongoDB
+Redis
+Docker
+Kubernetes
+AWS
+Azure
+GCP
+Git
+CI/CD
+Jenkins
+GitLab CI
+GitHub Actions
+Terraform
+Ansible
+Linux
+SQL
+NoSQL
+GraphQL
+REST API
+Microservices
+System Design
+Data Structures
+Algorithms
+Machine Learning
+Deep Learning
+TensorFlow
+PyTorch
+Scikit-learn
+Pandas
+NumPy
+HTML
+CSS
+SASS
+Tailwind CSS
+Bootstrap
+Next.js
+Nuxt.js
+Svelte
+Deno
+Bun
+gRPC
+Protocol Buffers
+Message Queues
+RabbitMQ
+Apache Kafka
+Elasticsearch
+Prometheus
+Grafana

@@ -81,6 +81,7 @@ def append_candidate(candidate):
         "",                                        # Shared On
         "",                                        # Source Name
         candidate.get("current_designation", ""),  # Role
+        candidate.get("level",""),                 #Level
         skills,                                    # Skills
         ""                                         # HR Name
     ])

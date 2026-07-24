@@ -20,7 +20,7 @@ async def create_admin(email: str, password: str) -> None:
             print(f"User with email {email!r} already exists. Exiting.")
             await engine.dispose()
             return
-        user = User(
+        user = User( 
             email=email,
             hashed_password=pwd_context.hash(password),
             full_name="Admin",

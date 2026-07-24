@@ -75,7 +75,7 @@ export default function ForgotPassword() {
                 <p className="text-xs text-text-3 font-mono mt-2">
                   (Check the backend terminal to see the link!)
                 </p>
-                <Button asChild className="w-full mt-4" variant="outline">
+                <Button asChild className="w-full mt-4" variant="secondary">
                   <Link to="/login">Return to login</Link>
                 </Button>
               </div>
@@ -99,12 +99,12 @@ export default function ForgotPassword() {
                   )}
                 </div>
 
-                {error && (
+                {error ? (
                   <p className="text-sm text-error flex items-center gap-1" role="alert">
                     <AlertCircle className="h-3 w-3 shrink-0" aria-hidden="true" />
                     {getApiErrorMessage(error, 'Request failed')}
                   </p>
-                )}
+                ) : null}
 
                 <Button type="submit" className="w-full" disabled={isPending}>
                   {isPending ? 'Sending...' : 'Send reset link'}

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -24,16 +25,26 @@ export default function Login() {
   const shouldReduceMotion = useReducedMotion()
   const isAuthenticated = useAuthStore(selectIsAuthenticated)
   const hasHydrated = useAuthStore.persist.hasHydrated()
-  const { mutate: login, isPending, isError, error } = useLogin()
+  const { mutate: login, isPending, isError, error, reset } = useLogin()
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
   })
+
+  useEffect(() => {
+    const subscription = watch(() => {
+      if (isError) {
+        reset()
+      }
+    })
+    return () => subscription.unsubscribe()
+  }, [watch, isError, reset])
 
   if (!hasHydrated) {
     return <LoadingSpinner fullScreen text="Loading..." />

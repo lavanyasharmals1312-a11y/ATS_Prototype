@@ -131,12 +131,12 @@ export default function ResetPassword() {
                   )}
                 </div>
 
-                {error && (
+                {error ? (
                   <p className="text-sm text-error flex items-center gap-1" role="alert">
                     <AlertCircle className="h-3 w-3 shrink-0" aria-hidden="true" />
                     {getApiErrorMessage(error, 'Reset failed')}
                   </p>
-                )}
+                ) : null}
 
                 <Button type="submit" className="w-full" disabled={isPending}>
                   {isPending ? 'Updating...' : 'Update password'}

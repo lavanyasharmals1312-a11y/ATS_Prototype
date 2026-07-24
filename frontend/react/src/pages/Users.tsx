@@ -129,7 +129,7 @@ export default function Users() {
               {error && <p className="text-sm text-error">{error}</p>}
               
               <div className="flex justify-end gap-2">
-                <Button variant="outline" type="button" onClick={() => setIsAdding(false)}>Cancel</Button>
+                <Button variant="secondary" type="button" onClick={() => setIsAdding(false)}>Cancel</Button>
                 <Button type="submit">Create User</Button>
               </div>
             </form>

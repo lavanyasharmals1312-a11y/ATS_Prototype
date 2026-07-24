@@ -3,15 +3,18 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { motion, useReducedMotion } from 'framer-motion'
-import { ArrowLeft, Save, Loader2 } from 'lucide-react'
+import { ArrowLeft, Save, Loader2, AlertCircle } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { useWatch } from 'react-hook-form'
 import { PageHeader } from '@/components/common/PageHeader'
+import { SectionHeader } from '@/components/common/SectionHeader'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { EmptyState } from '@/components/common/EmptyState'
+import { SkillBadge } from '@/components/candidates/SkillBadge'
 import { useCandidate } from '@/hooks/useCandidate'
 import { candidateService } from '@/services/candidateService'
 import { getApiErrorMessage } from '@/lib/utils'
@@ -38,6 +41,23 @@ const editSchema = z.object({
 
 type EditFormValues = z.infer<typeof editSchema>
 
+function LiveChips({ value }: { value: string | undefined }) {
+  const chips = (value ?? '').split(',').map((s) => s.trim()).filter(Boolean)
+  if (chips.length === 0) return null
+  return (
+    <div className="flex flex-wrap gap-1 pt-1">
+      {chips.map((chip) => (
+        <SkillBadge key={chip} skill={chip} />
+      ))}
+    </div>
+  )
+}
+
+function SkillsPreview({ control, name }: { control: ReturnType<typeof useForm<EditFormValues>>['control']; name: 'skills' | 'tags' }) {
+  const value = useWatch({ control, name })
+  return <LiveChips value={value} />
+}
+
 export default function CandidateEdit() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -49,6 +69,7 @@ export default function CandidateEdit() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isDirty, isSubmitting },
   } = useForm<EditFormValues>({
     resolver: zodResolver(editSchema),
@@ -79,11 +100,11 @@ export default function CandidateEdit() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['candidate', id] })
       queryClient.invalidateQueries({ queryKey: ['candidates'] })
-      toast.success('Candidate updated')
+      toast.success('Candidate updated successfully')
       navigate(`/candidates/${id}`)
     },
-    onError: (error: unknown) => {
-      toast.error(getApiErrorMessage(error, 'Update failed'))
+    onError: (err: unknown) => {
+      toast.error(getApiErrorMessage(err, 'Update failed'))
     },
   })
 
@@ -102,8 +123,12 @@ export default function CandidateEdit() {
       expected_ctc: formData.expected_ctc || undefined,
       highest_qualification: formData.highest_qualification || undefined,
       university: formData.university || undefined,
-      skills: formData.skills ? formData.skills.split(',').map((s) => s.trim()).filter(Boolean) : undefined,
-      tags: formData.tags ? formData.tags.split(',').map((t) => t.trim()).filter(Boolean) : undefined,
+      skills: formData.skills
+        ? formData.skills.split(',').map((s) => s.trim()).filter(Boolean)
+        : undefined,
+      tags: formData.tags
+        ? formData.tags.split(',').map((t) => t.trim()).filter(Boolean)
+        : undefined,
       notes: formData.notes || undefined,
     }
     updateMutation.mutate(payload)
@@ -118,7 +143,9 @@ export default function CandidateEdit() {
       >
         <PageHeader title="Edit Candidate" />
         <div className="mx-auto max-w-2xl space-y-4">
-          <Skeleton className="h-96 rounded-lg" />
+          <Skeleton className="h-64 rounded-lg" />
+          <Skeleton className="h-48 rounded-lg" />
+          <Skeleton className="h-32 rounded-lg" />
         </div>
       </motion.div>
     )
@@ -133,7 +160,7 @@ export default function CandidateEdit() {
       >
         <PageHeader title="Edit Candidate" />
         <EmptyState
-          icon={ArrowLeft}
+          icon={AlertCircle}
           title="Candidate not found"
           description="This candidate may have been removed."
           action={
@@ -153,129 +180,205 @@ export default function CandidateEdit() {
       transition={{ duration: 0.2, ease: 'easeOut' }}
     >
       <PageHeader
-        title="Edit Candidate"
-        description={`Editing ${candidate.candidate_name ?? 'candidate'}`}
+        title={
+          <span className="flex items-center gap-2">
+            {candidate.candidate_name ?? 'Edit Candidate'}
+            {isDirty && (
+              <span
+                className="inline-block h-1.5 w-1.5 rounded-full bg-warning"
+                title="Unsaved changes"
+                aria-label="Unsaved changes"
+              />
+            )}
+          </span>
+        }
+        description="Edit candidate information"
         actions={
-          <Button variant="ghost" size="sm" onClick={() => navigate(`/candidates/${id}`)}>
-            <ArrowLeft className="h-4 w-4 mr-1.5" aria-hidden="true" />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(`/candidates/${id}`)}
+          >
+            <ArrowLeft className="mr-1.5 h-4 w-4" aria-hidden="true" />
             Cancel
           </Button>
         }
       />
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <div className="mx-auto max-w-2xl space-y-8">
+        <div className="mx-auto max-w-2xl space-y-5">
+          {/* Personal */}
           <div className="rounded-lg border border-border bg-surface p-5">
-            <h2 className="text-base font-semibold text-text mb-4">Contact Information</h2>
+            <SectionHeader title="Personal Information" />
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="candidate_name">Full Name</Label>
-                <Input id="candidate_name" {...register('candidate_name')} />
+              <div className="space-y-1.5">
+                <Label htmlFor="candidate_name" className="text-xs text-text-2">Full Name</Label>
+                <Input id="candidate_name" placeholder="Jane Doe" {...register('candidate_name')} />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="candidate_email">Email</Label>
-                <Input id="candidate_email" type="email" aria-invalid={!!errors.candidate_email} {...register('candidate_email')} />
-                {errors.candidate_email && <p className="text-xs text-error">{errors.candidate_email.message}</p>}
+              <div className="space-y-1.5">
+                <Label htmlFor="candidate_email" className="text-xs text-text-2">Email</Label>
+                <Input
+                  id="candidate_email"
+                  type="email"
+                  placeholder="jane@example.com"
+                  aria-invalid={!!errors.candidate_email}
+                  {...register('candidate_email')}
+                />
+                {errors.candidate_email && (
+                  <p className="text-xs text-error">{errors.candidate_email.message}</p>
+                )}
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="candidate_phone">Phone</Label>
-                <Input id="candidate_phone" {...register('candidate_phone')} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="current_location">Current Location</Label>
-                <Input id="current_location" {...register('current_location')} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="preferred_location">Preferred Location</Label>
-                <Input id="preferred_location" {...register('preferred_location')} />
+              <div className="space-y-1.5 sm:col-span-2">
+                <Label htmlFor="candidate_phone" className="text-xs text-text-2">Phone</Label>
+                <Input id="candidate_phone" type="tel" placeholder="+91 98765 43210" {...register('candidate_phone')} />
               </div>
             </div>
           </div>
 
+          {/* Professional */}
           <div className="rounded-lg border border-border bg-surface p-5">
-            <h2 className="text-base font-semibold text-text mb-4">Professional Details</h2>
+            <SectionHeader title="Professional Details" />
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="current_company">Current Company</Label>
-                <Input id="current_company" {...register('current_company')} />
+              <div className="space-y-1.5">
+                <Label htmlFor="current_designation" className="text-xs text-text-2">Job Title</Label>
+                <Input id="current_designation" placeholder="Senior Engineer" {...register('current_designation')} />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="current_designation">Designation</Label>
-                <Input id="current_designation" {...register('current_designation')} />
+              <div className="space-y-1.5">
+                <Label htmlFor="current_company" className="text-xs text-text-2">Current Company</Label>
+                <Input id="current_company" placeholder="Acme Corp" {...register('current_company')} />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="experience_years">Experience (years)</Label>
-                <Input id="experience_years" type="number" min={0} max={50} {...register('experience_years')} />
+              <div className="space-y-1.5">
+                <Label htmlFor="experience_years" className="text-xs text-text-2">Experience (years)</Label>
+                <Input id="experience_years" type="number" min={0} max={50} step={0.5} placeholder="5" {...register('experience_years')} />
+                {errors.experience_years && (
+                  <p className="text-xs text-error">{String(errors.experience_years.message)}</p>
+                )}
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="notice_period">Notice Period</Label>
-                <Input id="notice_period" placeholder="e.g. 30 days" {...register('notice_period')} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="highest_qualification">Highest Qualification</Label>
-                <Input id="highest_qualification" {...register('highest_qualification')} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="university">University</Label>
-                <Input id="university" {...register('university')} />
+              <div className="space-y-1.5">
+                <Label htmlFor="notice_period" className="text-xs text-text-2">Notice Period</Label>
+                <Input id="notice_period" placeholder="30 days" {...register('notice_period')} />
               </div>
             </div>
           </div>
 
+          {/* Location */}
           <div className="rounded-lg border border-border bg-surface p-5">
-            <h2 className="text-base font-semibold text-text mb-4">Compensation</h2>
+            <SectionHeader title="Location" />
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="current_ctc">Current CTC</Label>
-                <Input id="current_ctc" placeholder="e.g. ₹12,00,000" {...register('current_ctc')} />
+              <div className="space-y-1.5">
+                <Label htmlFor="current_location" className="text-xs text-text-2">Current Location</Label>
+                <Input id="current_location" placeholder="Bengaluru, India" {...register('current_location')} />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="expected_ctc">Expected CTC</Label>
-                <Input id="expected_ctc" placeholder="e.g. ₹18,00,000" {...register('expected_ctc')} />
+              <div className="space-y-1.5">
+                <Label htmlFor="preferred_location" className="text-xs text-text-2">Preferred Location</Label>
+                <Input id="preferred_location" placeholder="Remote / Mumbai" {...register('preferred_location')} />
               </div>
             </div>
           </div>
 
+          {/* Education */}
           <div className="rounded-lg border border-border bg-surface p-5">
-            <h2 className="text-base font-semibold text-text mb-4">Skills & Tags</h2>
+            <SectionHeader title="Education" />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="highest_qualification" className="text-xs text-text-2">Highest Qualification</Label>
+                <Input id="highest_qualification" placeholder="B.Tech" {...register('highest_qualification')} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="university" className="text-xs text-text-2">University / Institute</Label>
+                <Input id="university" placeholder="IIT Delhi" {...register('university')} />
+              </div>
+            </div>
+          </div>
+
+          {/* Compensation */}
+          <div className="rounded-lg border border-border bg-surface p-5">
+            <SectionHeader title="Compensation" />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="current_ctc" className="text-xs text-text-2">Current CTC</Label>
+                <Input id="current_ctc" placeholder="₹12,00,000" {...register('current_ctc')} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="expected_ctc" className="text-xs text-text-2">Expected CTC</Label>
+                <Input id="expected_ctc" placeholder="₹18,00,000" {...register('expected_ctc')} />
+              </div>
+            </div>
+          </div>
+
+          {/* Skills & Tags */}
+          <div className="rounded-lg border border-border bg-surface p-5">
+            <SectionHeader title="Skills & Tags" />
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="skills">Skills (comma-separated)</Label>
-                <Input id="skills" placeholder="React, Python, TypeScript..." {...register('skills')} />
+              <div className="space-y-1.5">
+                <Label htmlFor="skills" className="text-xs text-text-2">Skills</Label>
+                <Input
+                  id="skills"
+                  placeholder="React, Python, TypeScript…"
+                  {...register('skills')}
+                />
+                <p className="text-[10px] text-text-4">Separate skills with commas</p>
+                <SkillsPreview control={control} name="skills" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="tags">Tags (comma-separated)</Label>
-                <Input id="tags" placeholder="Urgent, Remote-ready..." {...register('tags')} />
+              <div className="space-y-1.5">
+                <Label htmlFor="tags" className="text-xs text-text-2">Tags</Label>
+                <Input
+                  id="tags"
+                  placeholder="Urgent, Remote-ready…"
+                  {...register('tags')}
+                />
+                <p className="text-[10px] text-text-4">Separate tags with commas</p>
+                <SkillsPreview control={control} name="tags" />
               </div>
             </div>
           </div>
 
+          {/* Notes */}
           <div className="rounded-lg border border-border bg-surface p-5">
-            <h2 className="text-base font-semibold text-text mb-4">Notes</h2>
-            <div className="space-y-2">
-              <Label htmlFor="notes" className="sr-only">Notes</Label>
-              <textarea
-                id="notes"
-                rows={4}
-                className="w-full rounded bg-surface border border-border px-3 py-2 text-sm text-text placeholder:text-text-4 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-colors resize-y"
-                placeholder="Internal notes about this candidate..."
-                {...register('notes')}
-              />
-            </div>
+            <SectionHeader title="Notes" />
+            <textarea
+              id="notes"
+              rows={4}
+              className="w-full resize-y rounded-md border border-border bg-transparent px-3 py-2 text-sm text-text placeholder:text-text-4 transition-colors focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+              placeholder="Internal notes about this candidate…"
+              {...register('notes')}
+            />
           </div>
+        </div>
 
-          <div className="flex items-center justify-end gap-3 pb-8">
-            <Button variant="ghost" type="button" onClick={() => navigate(`/candidates/${id}`)}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={!isDirty || isSubmitting}>
-              {isSubmitting ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-1.5" aria-hidden="true" />
-              ) : (
-                <Save className="h-4 w-4 mr-1.5" aria-hidden="true" />
-              )}
-              Save Changes
-            </Button>
+        {/* Sticky footer */}
+        <div className="sticky bottom-0 z-10 mt-6 border-t border-border bg-bg/80 py-3 backdrop-blur-md">
+          <div className="mx-auto flex max-w-2xl items-center justify-between gap-3">
+            <p className="text-xs text-text-3">
+              {isDirty ? 'You have unsaved changes' : 'No changes made'}
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                type="button"
+                size="sm"
+                onClick={() => navigate(`/candidates/${id}`)}
+              >
+                Discard
+              </Button>
+              <Button
+                type="submit"
+                size="sm"
+                disabled={!isDirty || isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-1.5 h-4 w-4 animate-spin" aria-hidden="true" />
+                    Saving…
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-1.5 h-4 w-4" aria-hidden="true" />
+                    Save Changes
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </form>

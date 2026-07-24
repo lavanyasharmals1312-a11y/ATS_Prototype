@@ -39,11 +39,15 @@ export default function Candidates() {
     (page: number) => {
       handleApplyFilters({ ...filters, page })
     },
-    [handleApplyFilters, filters],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [handleApplyFilters, filters.search, filters.skills, filters.location],
   )
 
   const totalPages = data?.pages ?? 1
   const currentPage = data?.page ?? 1
+  const pageSize = data?.page_size ?? 20
+  const showing = data?.items.length ?? 0
+  const total = data?.total ?? 0
 
   return (
     <motion.div
@@ -53,19 +57,25 @@ export default function Candidates() {
     >
       <PageHeader
         title="Candidates"
-        description="Search and manage your talent pool"
+        description="Search and manage your talent pipeline"
       />
 
-      <FilterPanel filters={filters} onApply={handleApplyFilters} />
+      <FilterPanel
+        filters={filters}
+        onApply={handleApplyFilters}
+        total={data?.total}
+        showing={showing}
+      />
 
       <CandidateTable data={data?.items} isLoading={isLoading} isError={isError} />
 
       {data && data.pages > 1 && (
         <div className="mt-4 flex items-center justify-between">
-          <p className="text-sm text-text-3 tabular-nums">
-            Page {currentPage} of {totalPages} ({data.total} total)
+          <p className="text-xs text-text-3 tabular-nums">
+            Page {currentPage} of {totalPages} &mdash;{' '}
+            {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, total)} of {total.toLocaleString()}
           </p>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <Button
               variant="ghost"
               size="sm"
@@ -74,7 +84,7 @@ export default function Candidates() {
               aria-label="Previous page"
             >
               <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-              Previous
+              Prev
             </Button>
             <Button
               variant="ghost"

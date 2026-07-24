@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 interface PageHeaderProps {
-  title: string
+  title: ReactNode
   description?: string
   actions?: ReactNode
   className?: string
@@ -10,12 +10,21 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description, actions, className }: PageHeaderProps) {
   return (
-    <div className={cn('mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between', className)}>
+    <div
+      className={cn(
+        'mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between',
+        className,
+      )}
+    >
       <div>
-        <h1 className="text-2xl font-semibold text-text tracking-tight">{title}</h1>
-        {description && <p className="mt-1 text-sm text-text-3">{description}</p>}
+        <h1 className="text-xl font-semibold tracking-tight text-text">{title}</h1>
+        {description && (
+          <p className="mt-0.5 text-sm text-text-3">{description}</p>
+        )}
       </div>
-      {actions && <div className="flex items-center gap-3">{actions}</div>}
+      {actions && (
+        <div className="flex shrink-0 items-center gap-2">{actions}</div>
+      )}
     </div>
   )
 }

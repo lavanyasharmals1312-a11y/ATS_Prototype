@@ -1,64 +1,50 @@
 import { useState, useCallback, useRef } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { FileSpreadsheet, Upload, ChevronDown, ChevronRight, AlertCircle } from 'lucide-react'
+import { FileSpreadsheet, Upload, ChevronDown, ChevronRight, AlertCircle, Info } from 'lucide-react'
 import { PageHeader } from '@/components/common/PageHeader'
 import { EmptyState } from '@/components/common/EmptyState'
 import { StatusBadge } from '@/components/candidates/StatusBadge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { useImportBatches, useImportBatch, useUploadTracker } from '@/hooks/useImport'
-import { formatDate, cn } from '@/lib/utils'
+import { formatDate } from '@/lib/utils'
 
-function ImportBatchDetail({ id }: { id: string }) {
+function ErrorLogPanel({ id }: { id: string }) {
   const { data: batch, isLoading } = useImportBatch(id)
-
-  if (isLoading || !batch) {
+  if (isLoading) {
     return (
-      <div className="mt-2 rounded bg-surface-2 p-4">
-        <Skeleton className="h-4 w-48" />
-      </div>
+      <tr>
+        <td colSpan={7} className="bg-surface-2 px-4 py-3">
+          <Skeleton className="h-4 w-48" />
+        </td>
+      </tr>
     )
   }
-
+  if (!batch?.error_log || batch.error_log.length === 0) {
+    return (
+      <tr>
+        <td colSpan={7} className="bg-surface-2 px-4 py-3 text-xs text-text-3">
+          No error details available.
+        </td>
+      </tr>
+    )
+  }
   return (
-    <div className="mt-2 rounded bg-surface-2 p-4">
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <div>
-          <p className="text-xs text-text-3 uppercase tracking-widest">Total Rows</p>
-          <p className="mt-0.5 text-lg font-bold text-text tabular-nums">{batch.total_rows}</p>
+    <tr>
+      <td colSpan={7} className="bg-surface-2 px-4 py-3">
+        <p className="mb-1.5 flex items-center gap-1 text-xs font-medium text-error">
+          <AlertCircle className="h-3 w-3" aria-hidden="true" />
+          Error Log
+        </p>
+        <div className="max-h-32 overflow-y-auto space-y-0.5">
+          {batch.error_log.map((log, i) => (
+            <p key={i} className="text-xs text-text-3">
+              Row {String(log.row ?? '?')}: {String(log.error ?? 'Unknown error')}
+            </p>
+          ))}
         </div>
-        <div>
-          <p className="text-xs text-text-3 uppercase tracking-widest">Successful</p>
-          <p className="mt-0.5 text-lg font-bold text-success tabular-nums">{batch.successful_rows}</p>
-        </div>
-        <div>
-          <p className="text-xs text-text-3 uppercase tracking-widest">Duplicates</p>
-          <p className="mt-0.5 text-lg font-bold text-warning tabular-nums">{batch.duplicate_rows}</p>
-        </div>
-        <div>
-          <p className="text-xs text-text-3 uppercase tracking-widest">Errors</p>
-          <p className={cn('mt-0.5 text-lg font-bold tabular-nums', batch.error_rows > 0 ? 'text-error' : 'text-text-3')}>
-            {batch.error_rows}
-          </p>
-        </div>
-      </div>
-
-      {batch.error_log && batch.error_log.length > 0 && (
-        <div className="mt-3">
-          <p className="mb-1 text-xs font-medium text-error flex items-center gap-1">
-            <AlertCircle className="h-3 w-3" aria-hidden="true" />
-            Error Log
-          </p>
-          <div className="max-h-32 overflow-y-auto space-y-1">
-            {batch.error_log.map((log: Record<string, unknown>, i: number) => (
-              <p key={i} className="text-xs text-text-3">
-                Row {String(log.row ?? '?')}: {String(log.error ?? 'Unknown error')}
-              </p>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+      </td>
+    </tr>
   )
 }
 
@@ -101,78 +87,150 @@ export default function Import() {
               onChange={handleFileChange}
               className="sr-only"
               aria-hidden="true"
+              tabIndex={-1}
             />
             <Button
               size="sm"
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
             >
-              <Upload className="h-4 w-4 mr-1.5" aria-hidden="true" />
-              {isUploading ? 'Uploading...' : 'Upload Tracker'}
+              <Upload className="mr-1.5 h-4 w-4" aria-hidden="true" />
+              {isUploading ? 'Uploading…' : 'Upload Tracker'}
             </Button>
           </>
         }
       />
 
-      <div className="rounded-lg border border-border bg-surface p-6 mb-8">
-        <div className="flex items-start gap-4">
-          <div className="rounded-full bg-info/10 p-2">
-            <FileSpreadsheet className="h-5 w-5 text-info" aria-hidden="true" />
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-text">Excel Tracker Import</h3>
-            <p className="mt-1 text-xs text-text-3">
-              Upload .xlsx or .xls files exported from candidate trackers.
-              The system will parse rows and match against existing candidates.
-            </p>
-          </div>
+      {/* Info callout */}
+      <div className="mb-6 flex items-start gap-3 rounded-lg border border-info/20 bg-info/5 p-4">
+        <Info className="mt-0.5 h-4 w-4 shrink-0 text-info" aria-hidden="true" />
+        <div>
+          <p className="text-sm font-medium text-text">Excel Tracker Import</p>
+          <p className="mt-0.5 text-xs text-text-3">
+            Upload .xlsx or .xls files exported from candidate trackers. The system will parse rows and match against existing candidates.
+          </p>
         </div>
       </div>
 
+      {/* Import history table */}
       {isLoading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-16 rounded-lg" />
-          ))}
+        <div className="overflow-hidden rounded-lg border border-border">
+          <div className="divide-y divide-border">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-4 px-4 py-3">
+                <Skeleton className="h-4 flex-1" />
+                <Skeleton className="h-5 w-20 rounded-sm" />
+                <Skeleton className="h-4 w-10" />
+                <Skeleton className="h-4 w-10" />
+                <Skeleton className="h-4 w-10" />
+                <Skeleton className="h-4 w-10" />
+                <Skeleton className="h-4 w-24" />
+              </div>
+            ))}
+          </div>
         </div>
       ) : isError ? (
         <EmptyState
           icon={FileSpreadsheet}
           title="Failed to load imports"
-          description="Could not load import history."
+          description="Could not load import history. Please try again."
         />
       ) : !data || data.items.length === 0 ? (
         <EmptyState
           icon={FileSpreadsheet}
           title="No imports yet"
-          description="Upload a tracker file to see import history here."
+          description="Upload a tracker file above to see import history here."
         />
       ) : (
-        <div className="space-y-2">
-          {data.items.map((batch) => (
-            <div key={batch.id} className="rounded-lg border border-border bg-surface overflow-hidden">
-              <button
-                onClick={() => toggleExpand(batch.id)}
-                className="flex w-full items-center gap-3 px-5 py-3 text-left transition-colors hover:bg-surface-2"
-                aria-expanded={expandedId === batch.id}
-              >
-                {expandedId === batch.id ? (
-                  <ChevronDown className="h-4 w-4 shrink-0 text-text-3" aria-hidden="true" />
-                ) : (
-                  <ChevronRight className="h-4 w-4 shrink-0 text-text-3" aria-hidden="true" />
-                )}
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-text truncate">{batch.original_filename}</p>
-                  <p className="text-xs text-text-3 tabular-nums">{formatDate(batch.created_at)}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <StatusBadge status={batch.status} />
-                  <span className="text-xs text-text-4 tabular-nums">{batch.total_rows} rows</span>
-                </div>
-              </button>
-              {expandedId === batch.id && <ImportBatchDetail id={batch.id} />}
-            </div>
-          ))}
+        <div className="overflow-hidden rounded-lg border border-border bg-surface">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm" aria-label="Import history">
+              <thead>
+                <tr className="border-b border-border bg-surface-2/60">
+                  <th scope="col" className="w-8 px-4 py-2.5" aria-label="Expand" />
+                  <th scope="col" className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-text-3">
+                    File
+                  </th>
+                  <th scope="col" className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-text-3">
+                    Status
+                  </th>
+                  <th scope="col" className="px-4 py-2.5 text-right text-[10px] font-semibold uppercase tracking-widest text-text-3">
+                    Total
+                  </th>
+                  <th scope="col" className="px-4 py-2.5 text-right text-[10px] font-semibold uppercase tracking-widest text-text-3">
+                    Success
+                  </th>
+                  <th scope="col" className="px-4 py-2.5 text-right text-[10px] font-semibold uppercase tracking-widest text-text-3">
+                    Dupes
+                  </th>
+                  <th scope="col" className="px-4 py-2.5 text-right text-[10px] font-semibold uppercase tracking-widest text-text-3">
+                    Errors
+                  </th>
+                  <th scope="col" className="px-4 py-2.5 text-right text-[10px] font-semibold uppercase tracking-widest text-text-3">
+                    Date
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/50">
+                {data.items.map((batch) => (
+                  <>
+                    <tr
+                      key={batch.id}
+                      className="cursor-pointer transition-colors hover:bg-surface-2"
+                      onClick={() => toggleExpand(batch.id)}
+                    >
+                      <td className="px-4 py-2.5 text-text-4">
+                        <button
+                          aria-expanded={expandedId === batch.id}
+                          aria-label={expandedId === batch.id ? 'Collapse error log' : 'Expand error log'}
+                          className="flex items-center justify-center focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded"
+                          tabIndex={-1}
+                        >
+                          {expandedId === batch.id ? (
+                            <ChevronDown className="h-4 w-4" aria-hidden="true" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                          )}
+                        </button>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <p className="truncate text-sm font-medium text-text max-w-[200px]" title={batch.original_filename}>
+                          {batch.original_filename}
+                        </p>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <StatusBadge status={batch.status} />
+                      </td>
+                      <td className="px-4 py-2.5 text-right text-xs tabular-nums text-text-2">
+                        {batch.total_rows}
+                      </td>
+                      <td className="px-4 py-2.5 text-right text-xs tabular-nums">
+                        <span className={batch.successful_rows > 0 ? 'text-success font-medium' : 'text-text-4'}>
+                          {batch.successful_rows}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2.5 text-right text-xs tabular-nums">
+                        <span className={batch.duplicate_rows > 0 ? 'text-warning font-medium' : 'text-text-4'}>
+                          {batch.duplicate_rows}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2.5 text-right text-xs tabular-nums">
+                        <span className={batch.error_rows > 0 ? 'text-error font-medium' : 'text-text-4'}>
+                          {batch.error_rows}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2.5 text-right text-xs tabular-nums text-text-4">
+                        {formatDate(batch.created_at)}
+                      </td>
+                    </tr>
+                    {expandedId === batch.id && (
+                      <ErrorLogPanel key={`${batch.id}-detail`} id={batch.id} />
+                    )}
+                  </>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </motion.div>

@@ -72,7 +72,7 @@ The project uses PostgreSQL as its single source of truth, managed via Docker fo
    ```
 5. Create your first Admin user (so you can log into the frontend):
    ```bash
-   python scripts/create_admin.py admin@proexlabs.com adminpassword
+   PYTHONPATH=. python scripts/create_admin.py admin@proexlabs.com adminpassword
    ```
    *(You can change the email and password to whatever you prefer).*
 6. Start the FastAPI development server:

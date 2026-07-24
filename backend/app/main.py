@@ -17,7 +17,7 @@ from app.routes.candidates import router as candidates_router
 from app.routes.stats import router as stats_router
 from app.routes.duplicates import router as duplicates_router
 from app.routes.imports import router as imports_router
-
+from app.routes.users import router as users_router
 
 # ── Logging setup ──────────────────────────────────────────
 
@@ -95,6 +95,7 @@ app.include_router(candidates_router)
 app.include_router(stats_router)
 app.include_router(duplicates_router)
 app.include_router(imports_router)
+app.include_router(users_router)
 
 
 # ── Global Exception Handler ───────────────────────────────

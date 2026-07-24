@@ -6,6 +6,7 @@ import {
   Copy,
   FileSpreadsheet,
   LogOut,
+  UserCog,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
@@ -60,6 +61,22 @@ export function Sidebar() {
             {label}
           </NavLink>
         ))}
+        {user?.role === 'admin' && (
+          <NavLink
+            to="/users"
+            className={({ isActive }) =>
+              cn(
+                'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                isActive
+                  ? 'bg-accent/10 text-accent'
+                  : 'text-text-2 hover:bg-surface-2 hover:text-text',
+              )
+            }
+          >
+            <UserCog className="h-4 w-4 shrink-0" aria-hidden="true" />
+            Team
+          </NavLink>
+        )}
       </nav>
 
       <div className="mt-auto border-t border-border/50 p-4">

@@ -8,6 +8,9 @@ import { ProtectedRoute } from '@/components/common/ProtectedRoute'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
 
 const Login = lazy(() => import('@/pages/Login'))
+const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'))
+const ResetPassword = lazy(() => import('@/pages/ResetPassword'))
+const Users = lazy(() => import('@/pages/Users'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
 const Upload = lazy(() => import('@/pages/Upload'))
 const Candidates = lazy(() => import('@/pages/Candidates'))
@@ -31,6 +34,22 @@ const router = createBrowserRouter([
     element: (
       <Suspense fallback={<LoadingSpinner fullScreen />}>
         <Login />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/forgot-password',
+    element: (
+      <Suspense fallback={<LoadingSpinner fullScreen />}>
+        <ForgotPassword />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/reset-password',
+    element: (
+      <Suspense fallback={<LoadingSpinner fullScreen />}>
+        <ResetPassword />
       </Suspense>
     ),
   },
@@ -95,6 +114,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<LoadingSpinner />}>
             <Import />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'users',
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <Users />
           </Suspense>
         ),
       },

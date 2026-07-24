@@ -8,6 +8,30 @@ export interface User {
   is_active: boolean
 }
 
+export interface UserCreate {
+  email: string
+  full_name: string
+  password: string
+  role?: string
+}
+
+export interface UserUpdate {
+  email?: string
+  full_name?: string
+  password?: string
+  role?: string
+  is_active?: boolean
+}
+
+export interface ForgotPasswordRequest {
+  email: string
+}
+
+export interface ResetPasswordRequest {
+  token: string
+  new_password: string
+}
+
 export interface LoginRequest {
   email: string
   password: string
